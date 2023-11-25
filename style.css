@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #F5F5F5 !important;
+  font-family: 'Noto Sans TC', sans-serif !important;
+  padding-bottom: 4rem;
+}
+
+nav.navbar {
+  background-color: #262E49;
+  padding: 1rem 2rem;
+  justify-content: flex-start;
+}
+
+.logo {
+  width: 46px;
+  height: 37px;
+  margin-right: .5rem;
+}
+
+svg circle {
+  stroke-dasharray: 500;
+  transform-origin: center center;
+  transform: rotate(-90deg);
+  animation: circle 1.5s ease-in forwards;
+}
+
+svg line {
+  stroke-dashoffset: 150;
+  stroke-dasharray: 150;
+  animation: line 1s ease-in forwards;
+}
+
+svg line:first-of-type {
+  transform-origin: center center;
+  transform: rotate(180deg);
+  animation-delay: 1s;
+}
+
+svg line:last-of-type {
+  animation-delay: 1.5s;
+}
+
+@keyframes circle {
+  from {
+    stroke-dashoffset: 500;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes line {
+  from {
+    stroke-dashoffset: 150;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.logo-text {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0;
+}
+
+.select-group {
+  display: flex;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+select.form-select {
+  width: 160px;
+  margin-right: 1.25rem;
+}
+
+button.btn-primary {
+  background-color: #262E49;
+}
+
+button.btn-primary:hover {
+  background-color: #3f4c75;
+}
+
+/* 投票概況 */
+.vote-status-wrap {
+  background-color: white;
+  padding: 20px 1rem;
+  border-radius: .5rem;
+}
+
+.vote-status-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.doghnut-chart-wrap {
+  width: 137px;
+}
+
+.chart-value {
+  padding-left: 1.5rem;
+  flex-grow: 1;
+}
+
+.chart-value > h4 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.vote-type-count > p {
+  margin-bottom: .5rem;
+}
+
+.vote-count {
+  font-weight: 700;
+}
+
+.voter-id {
+  margin-top: .25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  
+  color: white;
+}
+
+.party-vote-wrap:nth-of-type(1) .voter-id {
+  background-color: #84CB98;
+}
+.party-vote-wrap:nth-of-type(1) .party-voter {
+  border-right: 2px solid #84CB98;
+}
+.party-vote-wrap:nth-of-type(2) .party-voter {
+  border-right: 2px solid #8894D8;
+}
+.party-vote-wrap:nth-of-type(2) .voter-id {
+  background-color: #8894D8;
+}
+.party-vote-wrap:nth-of-type(3) .party-voter {
+  border-right: 2px solid #DFA175;
+}
+.party-vote-wrap:nth-of-type(3) .voter-id {
+  background-color: #DFA175;
+}
+
+.party-count {
+  font-size: 14px;
+  width: 113px;
+}
+
+.party-count > h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+/* 小提示 */
+.right-section {
+  height: 650px;
+  overflow: hidden;
+}
+.hint-container {
+  background-color: #DEE0E4;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.hint-title {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.hint-img {
+  margin: 2rem 0 1rem 0;
+  text-align: center;
+}
+
+/* 縣市、區域的三黨投票紀錄 */
+.vote-record-card {
+  opacity: 0;
+  transform: translateX(50%);
+  padding: 12px 16px;
+  border-width: 2px;
+  border-radius: .5rem;
+  border-style: solid;
+}
+
+.vote-record-card:nth-of-type(4),
+.vote-record-card:nth-of-type(5) {
+  margin-top: 1rem;
+}
+
+.dpp {
+  border-color: #84CB98;
+  background-color: #EDF7F0;
+}
+
+.kmt {
+  border-color: #8894D8;
+  background-color: #EDEFF9;
+}
+
+.vote-record-card > h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* 台灣地圖 */
+.taiwan-map {
+  overflow: hidden;
+  height: calc(100vh - 250px);
+}

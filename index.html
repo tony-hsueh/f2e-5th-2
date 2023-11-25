@@ -6,37 +6,646 @@
   <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <link rel="stylesheet" href="./style.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <title>開票地圖</title>
-  <style>
-    .navbar {
-      background-color: #262E49;
-      padding: .5rem 2rem;
-    }
-
-    .logo-text {
-      font-size: 2rem;
-      color: white;
-    }
-  </style>
 </head>
 <body>
   <nav class="navbar">
-    <div class="logo-text">2020 開票地圖</div>
+    <div class="logo">
+      <svg viewbox="0 0 200 200">
+        <circle cx="100" cy="100" r="70" stroke="#CE3527" stroke-width="12" fill="transparent" />
+        <line x1="100" y1="30" x2="100" y2="170" style="stroke:#CE3527;stroke-width:12" />
+        <line x1="100" y1="100" x2="50.5" y2="149.5" style="stroke:#CE3527;stroke-width:12" />
+      </svg>
+    </div>
+    <h1 class="logo-text">2020 開票地圖</h1>
   </nav>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="select-group">
+          <select class="form-select" aria-label="select city" id="city">
+            <option value="default" selected>請選擇縣市</option>
+          </select>
+          <select class="form-select" aria-label="select region" id="region" disabled>
+            <option value="default" selected>請選擇區域</option>
+          </select>
+          <select class="form-select" aria-label="select town" id="town" disabled>
+            <option value="default" selected>請選擇鄉鎮</option>
+          </select>
+          <button id="clear-btn" class="btn btn-primary">清除<i class="fa-solid fa-arrow-rotate-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-3">
+        <div class="vote-status-wrap">
+          <h2 class="vote-status-title">投票概況</h2>
+          <div class="d-flex align-items-center mt-4">
+            <div class="doghnut-chart-wrap">
+              <canvas id="vote-rate"></canvas>
+            </div>
+            <div class="chart-value">
+              <h4 id="vote-rate-value">74.9 %</h4>
+              <p>投票率</p>
+            </div>
+          </div>
+          <div class="mt-4 vote-type-count">
+            <p>投票數
+              <span class="vote-count" id="vote-value">14,464,571</span>
+            </p>
+            <p>
+              無效票數 
+              <span class="vote-count" id="invalid-vote-value">163,631</span>
+            </p>
+            <p>
+              有效票數 
+              <span class="vote-count" id="valid-vote-value">14,300,940</span>
+            </p> 
+          </div>
+          <!-- 三黨的投票數 -->
+          <h2 class="vote-status-title mt-5">全台投票各黨票數統計</h2>
+          <div class="d-flex align-items-center mt-4">
+            <div class="doghnut-chart-wrap">
+              <canvas id="party-vote-rate"></canvas>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="d-flex party-vote-wrap">
+              <div class="voter-id">3</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>民主進步黨</h4>
+                蔡英文 | 賴清德
+              </div>
+              <div class="party-count ps-3">
+                <h4>57.13%</h4>
+                <span id="dpp-vote-count">8,170,231</span>
+                <span>票</span>
+              </div>
+            </div>
+            <div class="d-flex mt-2 party-vote-wrap">
+              <div class="voter-id">2</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>中國國民黨</h4>
+                韓國瑜 | 張善政
+              </div>
+              <div class="party-count ps-3">
+                <h4>38.61%</h4>
+                <span id="dpp-vote-count">5,522,119</span>
+                <span>票</span>
+              </div>
+            </div>
+            <div class="d-flex mt-2 party-vote-wrap">
+              <div class="voter-id">1</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>親民黨</h4>
+                宋楚瑜 | 余湘
+              </div>
+              <div class="party-count ps-3">
+                <h4>4.26%</h4>
+                <span id="dpp-vote-count">608,590</span>
+                <span>票</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="taiwan-map">
+          <svg id="taiwan-svg"  viewbox="0 0 400 800">
+          </svg>
+        </div>
+      </div>
+      <div class="col-3 right-section">
+        <div class="hint-container">
+          <h3 class="hint-title">
+            <i class="fa-solid fa-circle-exclamation"></i>小提示
+          </h3>
+          <p class="hint-desc">
+            點擊選擇縣市、區、村里、可查看選舉結果
+          </p>
+          <div class="hint-img">
+            <img src="./images/click-select-hint.png" alt="點擊下拉選單提示示意圖">
+          </div>
+        </div>
+        <div class="hint-container mt-5">
+          <h3 class="hint-title">
+            <i class="fa-solid fa-circle-exclamation"></i>小提示
+          </h3>
+          <p class="hint-desc">
+            點擊地圖查看縣市的選舉結果
+          </p>
+          <div class="hint-img">
+            <img src="./images/click-map-hint.png" alt="點擊地圖提示示意圖">
+          </div>
+        </div>
+        <!-- 縣市三黨投票結果 -->
+        <div id="city-vote-record" class="vote-record-card"> 
+          <h3 id="cityName">臺北市</h3>
+          <div class="d-flex party-vote-wrap">
+            <div class="voter-id">3</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>民主進步黨</h4>
+              蔡英文 | 賴清德
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="city-dpp-rate">57.13%</h4>
+              <span id="city-dpp-vote-count">8,170,231</span>
+              <span>票</span>
+            </div>
+          </div>
+          <div class="d-flex mt-2 party-vote-wrap">
+            <div class="voter-id">2</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>中國國民黨</h4>
+              韓國瑜 | 張善政
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="city-kmt-rate">38.61%</h4>
+              <span id="city-kmt-vote-count">5,522,119</span>
+              <span>票</span>
+            </div>
+          </div>
+          <div class="d-flex mt-2 party-vote-wrap">
+            <div class="voter-id">1</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>親民黨</h4>
+              宋楚瑜 | 余湘
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="city-pfp-rate">4.26%</h4>
+              <span id="city-pfp-vote-count">608,590</span>
+              <span>票</span>
+            </div>
+          </div>
+        </div>
+        <!-- 區域三黨投票結果 -->
+        <div id="region-vote-record" class="vote-record-card"> 
+          <h3 id="regionName">臺北市</h3>
+          <div class="d-flex party-vote-wrap">
+            <div class="voter-id">3</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>民主進步黨</h4>
+              蔡英文 | 賴清德
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="region-dpp-rate">57.13%</h4>
+              <span id="region-dpp-vote-count">8,170,231</span>
+              <span>票</span>
+            </div>
+          </div>
+          <div class="d-flex mt-2 party-vote-wrap">
+            <div class="voter-id">2</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>中國國民黨</h4>
+              韓國瑜 | 張善政
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="region-kmt-rate">38.61%</h4>
+              <span id="region-kmt-vote-count">5,522,119</span>
+              <span>票</span>
+            </div>
+          </div>
+          <div class="d-flex mt-2 party-vote-wrap">
+            <div class="voter-id">1</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>親民黨</h4>
+              宋楚瑜 | 余湘
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="region-pfp-rate">4.26%</h4>
+              <span id="region-pfp-vote-count">608,590</span>
+              <span>票</span>
+            </div>
+          </div>
+        </div>
+        <!-- 鄉鎮三黨投票結果 -->
+        <div id="town-vote-record" class="vote-record-card"> 
+          <h3 id="townName">臺北市</h3>
+          <div class="d-flex party-vote-wrap">
+            <div class="voter-id">3</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>民主進步黨</h4>
+              蔡英文 | 賴清德
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="town-dpp-rate">57.13%</h4>
+              <span id="town-dpp-vote-count">8,170,231</span>
+              <span>票</span>
+            </div>
+          </div>
+          <div class="d-flex mt-2 party-vote-wrap">
+            <div class="voter-id">2</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>中國國民黨</h4>
+              韓國瑜 | 張善政
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="town-kmt-rate">38.61%</h4>
+              <span id="town-kmt-vote-count">5,522,119</span>
+              <span>票</span>
+            </div>
+          </div>
+          <div class="d-flex mt-2 party-vote-wrap">
+            <div class="voter-id">1</div>
+            <div class="party-count party-voter ms-3 pe-3">
+              <h4>親民黨</h4>
+              宋楚瑜 | 余湘
+            </div>
+            <div class="party-count ps-3">
+              <h4 id="town-pfp-rate">4.26%</h4>
+              <span id="town-pfp-vote-count">608,590</span>
+              <span>票</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js" integrity="sha512-4UKI/XKm3xrvJ6pZS5oTRvIQGIzZFoXR71rRBb1y2N+PbwAsKa5tPl2J6WvbEvwN3TxQCm8hMzsl/pO+82iRlg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script>
-    async function name() {
-      const data = await (await fetch('./new-taipei.xls')).arrayBuffer();
+    // d3.js 生成台灣地圖
+    const width = 400
+    const height = 800
+    const svg = d3.select("#taiwan-svg")
+    const g = svg.append("g")
+    let county;
+
+    const projectmethod = d3.geoMercator().center([123, 24]).scale(5500);
+    // 地理路徑生成器
+    let pathGenerator = d3.geoPath().projection(projectmethod);
+    // 提供給全域中下拉選單控制地圖
+    let features;
+    const INDEXTOPARTY = {
+      0 : 'pfp',
+      1 : 'kmt',
+      2 : 'dpp',
+    }
+    const electionData = {}
+    let voteInfo = [608590, 5522119, 8170231, 14300940, 163631, 14464571, 19311105, 74.9029]
+    // 提示介面（將會在選擇縣市或點選地圖消失，剛進入頁面或清除鍵按下後才顯示）
+    const hintContainers = document.querySelectorAll('.hint-container')
+
+    const voteRateElement = document.querySelector('#vote-rate-value')
+    const voteTotalValueElement = document.querySelector('#vote-value')
+    const voteInvalidValueElement = document.querySelector('#invalid-vote-value')
+    const voteValidValueElement = document.querySelector('#valid-vote-value')
+
+    const citySelect = document.querySelector('#city')
+    const regionSelect = document.querySelector('#region')
+    const townSelect = document.querySelector('#town')
+
+    const clearBtn = document.querySelector('#clear-btn')
+
+    function maxVoteCountParty (voteData) {
+      const threePartyVote = voteData.slice(0, 3)
+      const winPartyIndex = threePartyVote.indexOf(Math.max(...threePartyVote))
+      return INDEXTOPARTY[winPartyIndex]
+    }
+
+    function toggleVoteRecordCard (cardElement, isHide = true, delay = 0) {
+      cardElement.animate(
+        {
+          opacity: [0, 1],
+          transform: ["translateX(20%)", "translateX(0)"],
+        },
+        {
+          delay,
+          direction: isHide ? "reverse" : "normal",
+          duration: 500,
+          iterations: 1,
+          fill: "forwards",
+        }
+      )
+    }
+
+    function updateVoteChartAndValue(electionData) {
+      voteRateElement.innerText = electionData[7].toFixed(2) + ' %'
+      voteTotalValueElement.innerText = electionData[5].toLocaleString()
+      voteInvalidValueElement.innerText = electionData[4].toLocaleString()
+      voteValidValueElement.innerText = electionData[3].toLocaleString()
+      voteRateChart.data.datasets[0].data = [electionData[5], electionData[6] - electionData[5]]
+      voteRateChart.update()
+    }
+
+    clearBtn.addEventListener('click', () => {
+      updateVoteChartAndValue(voteInfo)
+      reset()
+      citySelect.value = 'default'
+      regionSelect.value = 'default'
+      townSelect.value = 'default'
+    })
+
+    function cityChange(cityName) {
+      const {total , ...rest} =  electionData[cityName]
+      regionSelect.disabled = false
+      townSelect.disabled = true
+      regionSelect.innerHTML = `<option selected>請選擇區域</option>`
+      townSelect.innerHTML = `<option selected>請選擇區域</option>` 
+      Object.keys(rest).forEach(regionName => {
+        regionSelect.innerHTML += `<option value=${regionName}>${regionName}</option>`
+      })
+      // 投票率更新
+      updateVoteChartAndValue(total)
+      // 縣市投票紀錄顯示出來
+      document.getElementById('city-dpp-rate').innerText = (total[2]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('city-kmt-rate').innerText = (total[1]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('city-pfp-rate').innerText = (total[0]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('city-dpp-vote-count').innerText = total[2].toLocaleString();
+      document.getElementById('city-kmt-vote-count').innerText = total[1].toLocaleString();
+      document.getElementById('city-pfp-vote-count').innerText = total[0].toLocaleString();
+      document.getElementById('cityName').innerText = cityName;
+      document.getElementById('city-vote-record').className = `vote-record-card ${maxVoteCountParty(total)}`;
+      if (window.getComputedStyle(document.getElementById('city-vote-record')).opacity === '0') {
+        toggleVoteRecordCard(document.getElementById('city-vote-record'), false, 510)
+      }
+      if (window.getComputedStyle(document.getElementById('region-vote-record')).opacity === '1') {
+        toggleVoteRecordCard(document.getElementById('region-vote-record'))
+      }
+      if (window.getComputedStyle(document.getElementById('town-vote-record')).opacity === '1') {
+        toggleVoteRecordCard(document.getElementById('town-vote-record'))
+      }
+      // 檢查提示的介面存不存在畫面上
+      if (window.getComputedStyle(hintContainers[0]).opacity === '0') return;
+      hintContainers.forEach(hintContainer => {
+        hintContainer.animate(
+          {
+            opacity: [1, 0],
+            transform: ["translateY(0)", "translateY(10px)"],
+          },
+          {
+            duration: 500,
+            iterations: 1,
+            fill: "forwards",
+          }
+        ) 
+        setTimeout(() => {
+          hintContainer.style.display = 'none'
+        }, 500);
+    })
+  }
+
+    citySelect.addEventListener('change', (e) => {
+      if (e.target.value === 'default') return;
+      // TODO 地圖聚焦到選到的縣市 (須找到方法引用到e，現在捨棄e.pointer, e.stoppropogation)
+      const selectedCityFeatures = features.filter(feature => feature.properties['COUNTYNAME'] === e.target.value)
+      clicked(null, selectedCityFeatures[0])
+      cityChange(e.target.value)
+    })
+    // 區域下拉選單
+    regionSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'default') return;
+      const {total , ...rest} =  electionData[citySelect.value][e.target.value]
+      townSelect.disabled = false
+      townSelect.innerHTML = `<option selected>請選擇區域</option>`
+      Object.keys(rest).forEach(townName => {
+        townSelect.innerHTML += `<option value=${townName}>${townName}</option>`
+      })
+      // 投票率更新
+      updateVoteChartAndValue(total)
+      // 區域投票紀錄顯示出來
+      document.getElementById('region-dpp-rate').innerText = (total[2]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('region-kmt-rate').innerText = (total[1]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('region-pfp-rate').innerText = (total[0]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('region-dpp-vote-count').innerText = total[2].toLocaleString();
+      document.getElementById('region-kmt-vote-count').innerText = total[1].toLocaleString();
+      document.getElementById('region-pfp-vote-count').innerText = total[0].toLocaleString();
+      document.getElementById('regionName').innerText = e.target.value;
+      document.getElementById('region-vote-record').className = `vote-record-card ${maxVoteCountParty(total)}`;
+      if (window.getComputedStyle(document.getElementById('region-vote-record')).opacity === '0') {
+        toggleVoteRecordCard(document.getElementById('region-vote-record'), false)
+      }
+      if (window.getComputedStyle(document.getElementById('town-vote-record')).opacity === '1') {
+        toggleVoteRecordCard(document.getElementById('town-vote-record'))
+      }
+    })
+    // 鄉鎮下拉選單
+    townSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'default') return;
+      const total =  electionData[citySelect.value][regionSelect.value][e.target.value]
+      // 投票率更新
+      updateVoteChartAndValue(total)
+      // 鄉鎮投票紀錄顯示出來
+      document.getElementById('town-dpp-rate').innerText = (total[2]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('town-kmt-rate').innerText = (total[1]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('town-pfp-rate').innerText = (total[0]/total[3]*100).toFixed(2)+' %';
+      document.getElementById('town-dpp-vote-count').innerText = total[2].toLocaleString();
+      document.getElementById('town-kmt-vote-count').innerText = total[1].toLocaleString();
+      document.getElementById('town-pfp-vote-count').innerText = total[0].toLocaleString();
+      document.getElementById('townName').innerText = e.target.value;
+      document.getElementById('town-vote-record').className = `vote-record-card ${maxVoteCountParty(total)}`;
+      if (window.getComputedStyle(document.getElementById('town-vote-record')).opacity === '0') {
+        toggleVoteRecordCard(document.getElementById('town-vote-record'), false)
+      }
+    })
+    // 產「投票率」的甜圈圈圖
+    const ctx = document.getElementById('vote-rate');
+    const ctx_party = document.getElementById('party-vote-rate');
+
+    const voteRateChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [
+          '投票數',
+          '未投票數',
+        ],
+        datasets: [{
+          data: [voteInfo[5], voteInfo[6] - voteInfo[5]],
+          backgroundColor: [
+            '#262E49',
+            '#D9D9D9',
+          ],
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        plugins: {
+            legend: {
+                display: false,
+            }
+        }
+      }
+    });
+
+    new Chart(ctx_party, {
+      type: 'doughnut',
+      data: {
+        labels: [
+          '民主進步黨',
+          '中國國民黨',
+          '親民黨',
+        ],
+        datasets: [{
+          data: [8170231, 5522119, 608590],
+          backgroundColor: [
+            '#84CB98',
+            '#8894D8',
+            '#DFA175',
+          ],
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        plugins: {
+            legend: {
+                display: false,
+            }
+        }
+      }
+    });
+
+    // 產台灣選舉資料
+    (async() => {
+      const data = await (await fetch('./taiwan-election.xls')).arrayBuffer();
       const workbook = XLSX.read(data);
-      const ws = workbook.Sheets[workbook.SheetNames[0]];
-      var arr = XLSX.utils.sheet_to_json(ws, {header: 1});
 
-      console.log(arr);
-    };
+      for (let i = 0; i < workbook.SheetNames.length; ++i) {
+        var ws = workbook.Sheets[workbook.SheetNames[i]];
+        let arr = XLSX.utils.sheet_to_json(ws, {header: 1});
+        let temp = {}
+        let cityName;
+  
+        arr.forEach((el, index) => {
+          if (index === 0) {
+            temp['total'] = el.slice(2);
+            return;
+          } 
+          if (el[0] !== '') {
+            cityName = el[0].trim() 
+            temp[cityName] = {}
+            temp[cityName]['total'] = el.slice(2)
+          } else {
+            temp[cityName][el[1].trim()] = el.slice(2)
+          }
+        });
+        
+        electionData[workbook.SheetNames[i]] = temp
+        // 下拉選單灌入資料
+        citySelect.innerHTML += `<option value=${workbook.SheetNames[i]}>${workbook.SheetNames[i]}</option>` 
+      }
+      try {
+        const jsonResponse = await d3.json("./COUNTY_MOI_1090820.json");
+        const mapData = jsonResponse;
+        const geometries = topojson.feature(mapData, mapData.objects["COUNTY_MOI_1090820"])
+        features = geometries.features
+        county = g
+          .append("g")
+          .selectAll("path")
+          .data(geometries.features)
+          .join("path")
+          .attr("cursor", "pointer")
+          .on("click", clicked)
+          .attr("id", d => d.properties["COUNTYNAME"])
+          .attr("fill", d => {
+            const cityElectionData = electionData[d.properties.COUNTYNAME].total
+            const partyname = maxVoteCountParty(cityElectionData)
+            if (partyname === 'kmt') return '#8894D8'
+            if (partyname === 'dpp') return '#84CB98'
+            if (partyname === 'pfp') return '#DFA175'
+          })
+          .attr("d", pathGenerator);
 
-    name()
-    
+        county.append("title")
+          .text(d => d.properties["COUNTYNAME"]);
+        
+        
+
+        g.append("path")
+          .attr("fill", "none")
+          .attr("stroke", "white")
+          .attr("stroke-linejoin", "round")
+          .attr("d", pathGenerator(topojson.mesh(mapData, mapData.objects["COUNTY_MOI_1090820"] )));
+
+        g
+        .append("g")
+        .attr('pointer-events', "none")
+        .selectAll("text")
+        .data(geometries.features)
+        .enter()
+        .append("svg:text")
+        .text(d => d.properties["COUNTYNAME"])
+        .attr("x", d => {
+          if (
+            d.properties["COUNTYNAME"] === '嘉義縣' ||
+            d.properties["COUNTYNAME"] === '臺北市' ||
+            d.properties["COUNTYNAME"] === '新北市'
+          ) {
+            return pathGenerator.centroid(d)[0] + 5
+          }
+          return pathGenerator.centroid(d)[0]
+        })
+        .attr("y", d => {
+          if (
+            d.properties["COUNTYNAME"] === '嘉義縣' ||
+            d.properties["COUNTYNAME"] === '臺北市' ||
+            d.properties["COUNTYNAME"] === '新北市'
+          ) {
+            return pathGenerator.centroid(d)[1] + 7
+          }
+          return pathGenerator.centroid(d)[1]
+        })
+        .attr("font-size", '.5rem')
+        .attr('text-anchor', "middle")
+        .attr('fill', '#333')
+        .attr('text-shadow', '2px 2px 4px white')
+
+        d3.select(".map").append("input")
+        .attr("type", "button")
+        .style("position", "absolute")
+        .attr("name", "toggle")
+        .attr("value", "Toggle")
+        .attr("onclick", "reset()");
+      }catch (err) {
+        console.log(err);
+      }
+      
+    })();
+
+    function clicked (e, d) {
+      console.log(d);
+      const [[x0, y0], [x1, y1]] = pathGenerator.bounds(d);
+      citySelect.value = d.properties['COUNTYNAME']
+      cityChange(d.properties['COUNTYNAME'])
+      // e.stopPropagation();
+      county.transition().style("fill", null);
+      
+      svg.transition().duration(750).call(
+        zoom.transform,
+        d3.zoomIdentity
+          .translate(width / 2, height / 2)
+          .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+          .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+        // d3.pointer(e, svg.node())
+      );
+    }
+
+    function reset() {
+      county.transition().style("fill", null);
+      svg.transition().duration(750).call(
+        zoom.transform,
+        d3.zoomIdentity,
+        d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
+      );
+    }
+
+    const zoom = d3.zoom()
+    .scaleExtent([1, 8])
+    .on("zoom", zoomed);
+
+    svg.call(zoom)
+
+    function zoomed(event) {
+      const {transform} = event;
+      console.log(transform);
+      g.attr("transform", transform);
+      g.attr("stroke-width", 1 / transform.k);
+    }
   </script>
 </body>
 </html>

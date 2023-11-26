@@ -23,6 +23,24 @@
   <div class="container">
     <div class="row">
       <div class="col-12">
+        <!-- 手機版下拉選單 -->
+        <div class="select-group--mobile">
+          <div class="selects flex-grow-1">
+            <select class="form-select" aria-label="select city" id="cityMobile">
+              <option value="default" selected>請選擇縣市</option>
+            </select>
+            <div class="d-flex justify-content-between mt-2">
+              <select class="form-select" aria-label="select region" id="regionMobile" disabled>
+                <option value="default" selected>請選擇區域</option>
+              </select>
+              <select class="form-select" aria-label="select town" id="townMobile" disabled>
+                <option value="default" selected>請選擇鄉鎮</option>
+              </select>
+            </div>
+          </div>
+          <button id="clear-btn-mobile" class="btn btn-primary"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+        </div>
+        <!-- 電腦版下拉選單 -->
         <div class="select-group">
           <select class="form-select" aria-label="select city" id="city">
             <option value="default" selected>請選擇縣市</option>
@@ -33,14 +51,100 @@
           <select class="form-select" aria-label="select town" id="town" disabled>
             <option value="default" selected>請選擇鄉鎮</option>
           </select>
-          <button id="clear-btn" class="btn btn-primary">清除<i class="fa-solid fa-arrow-rotate-right"></i></button>
+          <button id="clear-btn" class="btn btn-primary">清除<i class="fa-solid fa-arrow-rotate-right ms-2"></i></button>
         </div>
       </div>
     </div>
   </div>
-  <div class="container mt-5">
+  <!-- 手機版投票概況 -->
+  <div class="container d-block d-xl-none mt-4">
     <div class="row">
-      <div class="col-3">
+      <div class="col-12">
+        <div class="accordion" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                投票概況
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <div class="d-flex align-items-center mt-4">
+                  <div class="doghnut-chart-wrap">
+                    <canvas id="vote-rate--mobile"></canvas>
+                  </div>
+                  <div class="chart-value">
+                    <h4 id="vote-rate-value-mobile">74.9 %</h4>
+                    <p>投票率</p>
+                  </div>
+                </div>
+                <div class="mt-4 vote-type-count">
+                  <p>投票數
+                    <span class="vote-count" id="vote-value-mobile">14,464,571</span>
+                  </p>
+                  <p>
+                    無效票數 
+                    <span class="vote-count" id="invalid-vote-value-mobile">163,631</span>
+                  </p>
+                  <p>
+                    有效票數 
+                    <span class="vote-count" id="valid-vote-value-mobile">14,300,940</span>
+                  </p> 
+                </div>
+                <h2 class="vote-status-title mt-5">全台投票各黨票數統計</h2>
+                <div class="d-flex align-items-center mt-4">
+                  <div class="doghnut-chart-wrap">
+                    <canvas id="party-vote-rate--mobile"></canvas>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <div class="d-flex party-vote-wrap">
+                    <div class="voter-id">3</div>
+                    <div class="party-count party-voter ms-3 pe-3">
+                      <h4>民主進步黨</h4>
+                      蔡英文 | 賴清德
+                    </div>
+                    <div class="party-count ps-3">
+                      <h4>57.13%</h4>
+                      <span id="dpp-vote-count">8,170,231</span>
+                      <span>票</span>
+                    </div>
+                  </div>
+                  <div class="d-flex mt-2 party-vote-wrap">
+                    <div class="voter-id">2</div>
+                    <div class="party-count party-voter ms-3 pe-3">
+                      <h4>中國國民黨</h4>
+                      韓國瑜 | 張善政
+                    </div>
+                    <div class="party-count ps-3">
+                      <h4>38.61%</h4>
+                      <span id="dpp-vote-count">5,522,119</span>
+                      <span>票</span>
+                    </div>
+                  </div>
+                  <div class="d-flex mt-2 party-vote-wrap">
+                    <div class="voter-id">1</div>
+                    <div class="party-count party-voter ms-3 pe-3">
+                      <h4>親民黨</h4>
+                      宋楚瑜 | 余湘
+                    </div>
+                    <div class="party-count ps-3">
+                      <h4>4.26%</h4>
+                      <span id="dpp-vote-count">608,590</span>
+                      <span>票</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container mt-3 mt-xl-5">
+    <div class="row">
+      <div class="col-3 d-none d-xl-block">
         <div class="vote-status-wrap">
           <h2 class="vote-status-title">投票概況</h2>
           <div class="d-flex align-items-center mt-4">
@@ -112,152 +216,154 @@
           </div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12 col-xl-6">
         <div class="taiwan-map">
-          <svg id="taiwan-svg"  viewbox="0 0 400 800">
+          <svg id="taiwan-svg" viewbox="0 0 400 800">
           </svg>
         </div>
       </div>
-      <div class="col-3 right-section">
-        <div class="hint-container">
-          <h3 class="hint-title">
-            <i class="fa-solid fa-circle-exclamation"></i>小提示
-          </h3>
-          <p class="hint-desc">
-            點擊選擇縣市、區、村里、可查看選舉結果
-          </p>
-          <div class="hint-img">
-            <img src="./images/click-select-hint.png" alt="點擊下拉選單提示示意圖">
-          </div>
-        </div>
-        <div class="hint-container mt-5">
-          <h3 class="hint-title">
-            <i class="fa-solid fa-circle-exclamation"></i>小提示
-          </h3>
-          <p class="hint-desc">
-            點擊地圖查看縣市的選舉結果
-          </p>
-          <div class="hint-img">
-            <img src="./images/click-map-hint.png" alt="點擊地圖提示示意圖">
-          </div>
-        </div>
-        <!-- 縣市三黨投票結果 -->
-        <div id="city-vote-record" class="vote-record-card"> 
-          <h3 id="cityName">臺北市</h3>
-          <div class="d-flex party-vote-wrap">
-            <div class="voter-id">3</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>民主進步黨</h4>
-              蔡英文 | 賴清德
-            </div>
-            <div class="party-count ps-3">
-              <h4 id="city-dpp-rate">57.13%</h4>
-              <span id="city-dpp-vote-count">8,170,231</span>
-              <span>票</span>
+      <div class="col-12 col-xl-3 mt-4 mt-xl-0">
+        <div class="right-section">
+          <div class="hint-container">
+            <h3 class="hint-title">
+              <i class="fa-solid fa-circle-exclamation"></i>小提示
+            </h3>
+            <p class="hint-desc">
+              點擊選擇縣市、區、村里、可查看選舉結果
+            </p>
+            <div class="hint-img">
+              <img src="./images/click-select-hint.png" alt="點擊下拉選單提示示意圖">
             </div>
           </div>
-          <div class="d-flex mt-2 party-vote-wrap">
-            <div class="voter-id">2</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>中國國民黨</h4>
-              韓國瑜 | 張善政
-            </div>
-            <div class="party-count ps-3">
-              <h4 id="city-kmt-rate">38.61%</h4>
-              <span id="city-kmt-vote-count">5,522,119</span>
-              <span>票</span>
-            </div>
-          </div>
-          <div class="d-flex mt-2 party-vote-wrap">
-            <div class="voter-id">1</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>親民黨</h4>
-              宋楚瑜 | 余湘
-            </div>
-            <div class="party-count ps-3">
-              <h4 id="city-pfp-rate">4.26%</h4>
-              <span id="city-pfp-vote-count">608,590</span>
-              <span>票</span>
+          <div class="hint-container mt-0 mt-xl-5 ms-3 ms-xl-0">
+            <h3 class="hint-title">
+              <i class="fa-solid fa-circle-exclamation"></i>小提示
+            </h3>
+            <p class="hint-desc">
+              點擊地圖查看縣市的選舉結果
+            </p>
+            <div class="hint-img">
+              <img src="./images/click-map-hint.png" alt="點擊地圖提示示意圖">
             </div>
           </div>
-        </div>
-        <!-- 區域三黨投票結果 -->
-        <div id="region-vote-record" class="vote-record-card"> 
-          <h3 id="regionName">臺北市</h3>
-          <div class="d-flex party-vote-wrap">
-            <div class="voter-id">3</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>民主進步黨</h4>
-              蔡英文 | 賴清德
+          <!-- 縣市三黨投票結果 -->
+          <div id="city-vote-record" class="vote-record-card"> 
+            <h3 id="cityName">臺北市</h3>
+            <div class="d-flex party-vote-wrap">
+              <div class="voter-id">3</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>民主進步黨</h4>
+                蔡英文 | 賴清德
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="city-dpp-rate">57.13%</h4>
+                <span id="city-dpp-vote-count">8,170,231</span>
+                <span>票</span>
+              </div>
             </div>
-            <div class="party-count ps-3">
-              <h4 id="region-dpp-rate">57.13%</h4>
-              <span id="region-dpp-vote-count">8,170,231</span>
-              <span>票</span>
+            <div class="d-flex mt-2 party-vote-wrap">
+              <div class="voter-id">2</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>中國國民黨</h4>
+                韓國瑜 | 張善政
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="city-kmt-rate">38.61%</h4>
+                <span id="city-kmt-vote-count">5,522,119</span>
+                <span>票</span>
+              </div>
             </div>
-          </div>
-          <div class="d-flex mt-2 party-vote-wrap">
-            <div class="voter-id">2</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>中國國民黨</h4>
-              韓國瑜 | 張善政
-            </div>
-            <div class="party-count ps-3">
-              <h4 id="region-kmt-rate">38.61%</h4>
-              <span id="region-kmt-vote-count">5,522,119</span>
-              <span>票</span>
-            </div>
-          </div>
-          <div class="d-flex mt-2 party-vote-wrap">
-            <div class="voter-id">1</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>親民黨</h4>
-              宋楚瑜 | 余湘
-            </div>
-            <div class="party-count ps-3">
-              <h4 id="region-pfp-rate">4.26%</h4>
-              <span id="region-pfp-vote-count">608,590</span>
-              <span>票</span>
-            </div>
-          </div>
-        </div>
-        <!-- 鄉鎮三黨投票結果 -->
-        <div id="town-vote-record" class="vote-record-card"> 
-          <h3 id="townName">臺北市</h3>
-          <div class="d-flex party-vote-wrap">
-            <div class="voter-id">3</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>民主進步黨</h4>
-              蔡英文 | 賴清德
-            </div>
-            <div class="party-count ps-3">
-              <h4 id="town-dpp-rate">57.13%</h4>
-              <span id="town-dpp-vote-count">8,170,231</span>
-              <span>票</span>
+            <div class="d-flex mt-2 party-vote-wrap">
+              <div class="voter-id">1</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>親民黨</h4>
+                宋楚瑜 | 余湘
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="city-pfp-rate">4.26%</h4>
+                <span id="city-pfp-vote-count">608,590</span>
+                <span>票</span>
+              </div>
             </div>
           </div>
-          <div class="d-flex mt-2 party-vote-wrap">
-            <div class="voter-id">2</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>中國國民黨</h4>
-              韓國瑜 | 張善政
+          <!-- 區域三黨投票結果 -->
+          <div id="region-vote-record" class="vote-record-card"> 
+            <h3 id="regionName">臺北市</h3>
+            <div class="d-flex party-vote-wrap">
+              <div class="voter-id">3</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>民主進步黨</h4>
+                蔡英文 | 賴清德
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="region-dpp-rate">57.13%</h4>
+                <span id="region-dpp-vote-count">8,170,231</span>
+                <span>票</span>
+              </div>
             </div>
-            <div class="party-count ps-3">
-              <h4 id="town-kmt-rate">38.61%</h4>
-              <span id="town-kmt-vote-count">5,522,119</span>
-              <span>票</span>
+            <div class="d-flex mt-2 party-vote-wrap">
+              <div class="voter-id">2</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>中國國民黨</h4>
+                韓國瑜 | 張善政
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="region-kmt-rate">38.61%</h4>
+                <span id="region-kmt-vote-count">5,522,119</span>
+                <span>票</span>
+              </div>
+            </div>
+            <div class="d-flex mt-2 party-vote-wrap">
+              <div class="voter-id">1</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>親民黨</h4>
+                宋楚瑜 | 余湘
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="region-pfp-rate">4.26%</h4>
+                <span id="region-pfp-vote-count">608,590</span>
+                <span>票</span>
+              </div>
             </div>
           </div>
-          <div class="d-flex mt-2 party-vote-wrap">
-            <div class="voter-id">1</div>
-            <div class="party-count party-voter ms-3 pe-3">
-              <h4>親民黨</h4>
-              宋楚瑜 | 余湘
+          <!-- 鄉鎮三黨投票結果 -->
+          <div id="town-vote-record" class="vote-record-card"> 
+            <h3 id="townName">臺北市</h3>
+            <div class="d-flex party-vote-wrap">
+              <div class="voter-id">3</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>民主進步黨</h4>
+                蔡英文 | 賴清德
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="town-dpp-rate">57.13%</h4>
+                <span id="town-dpp-vote-count">8,170,231</span>
+                <span>票</span>
+              </div>
             </div>
-            <div class="party-count ps-3">
-              <h4 id="town-pfp-rate">4.26%</h4>
-              <span id="town-pfp-vote-count">608,590</span>
-              <span>票</span>
+            <div class="d-flex mt-2 party-vote-wrap">
+              <div class="voter-id">2</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>中國國民黨</h4>
+                韓國瑜 | 張善政
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="town-kmt-rate">38.61%</h4>
+                <span id="town-kmt-vote-count">5,522,119</span>
+                <span>票</span>
+              </div>
+            </div>
+            <div class="d-flex mt-2 party-vote-wrap">
+              <div class="voter-id">1</div>
+              <div class="party-count party-voter ms-3 pe-3">
+                <h4>親民黨</h4>
+                宋楚瑜 | 余湘
+              </div>
+              <div class="party-count ps-3">
+                <h4 id="town-pfp-rate">4.26%</h4>
+                <span id="town-pfp-vote-count">608,590</span>
+                <span>票</span>
+              </div>
             </div>
           </div>
         </div>
@@ -276,6 +382,7 @@
     const svg = d3.select("#taiwan-svg")
     const g = svg.append("g")
     let county;
+    let mapText;
 
     const projectmethod = d3.geoMercator().center([123, 24]).scale(5500);
     // 地理路徑生成器
@@ -292,16 +399,15 @@
     // 提示介面（將會在選擇縣市或點選地圖消失，剛進入頁面或清除鍵按下後才顯示）
     const hintContainers = document.querySelectorAll('.hint-container')
 
-    const voteRateElement = document.querySelector('#vote-rate-value')
-    const voteTotalValueElement = document.querySelector('#vote-value')
-    const voteInvalidValueElement = document.querySelector('#invalid-vote-value')
-    const voteValidValueElement = document.querySelector('#valid-vote-value')
+    const voteRateElement = window.innerWidth < 1200 ? document.querySelector('#vote-rate-value-mobile') : document.querySelector('#vote-rate-value')
+    const voteTotalValueElement = window.innerWidth < 1200 ? document.querySelector('#vote-value-mobile') : document.querySelector('#vote-value')
+    const voteInvalidValueElement = window.innerWidth < 1200 ? document.querySelector('#invalid-vote-value-mobile') : document.querySelector('#invalid-vote-value')
+    const voteValidValueElement = window.innerWidth < 1200 ? document.querySelector('#valid-vote-value-mobile') : document.querySelector('#valid-vote-value')
+    const citySelect = window.innerWidth < 1200 ? document.querySelector('#cityMobile') : document.querySelector('#city')
+    const regionSelect = window.innerWidth < 1200 ? document.querySelector('#regionMobile') : document.querySelector('#region')
+    const townSelect = window.innerWidth < 1200 ? document.querySelector('#townMobile') : document.querySelector('#town')
 
-    const citySelect = document.querySelector('#city')
-    const regionSelect = document.querySelector('#region')
-    const townSelect = document.querySelector('#town')
-
-    const clearBtn = document.querySelector('#clear-btn')
+    const clearBtn = window.innerWidth < 1200 ? document.querySelector('#clear-btn-mobile') : document.querySelector('#clear-btn')
 
     function maxVoteCountParty (voteData) {
       const threePartyVote = voteData.slice(0, 3)
@@ -310,6 +416,15 @@
     }
 
     function toggleVoteRecordCard (cardElement, isHide = true, delay = 0) {
+      if(!isHide) {
+        if (delay > 0) {
+          setTimeout(() => {
+            cardElement.style.display = 'block'
+          }, delay)
+        } else {
+          cardElement.style.display = 'block'
+        }
+      }
       cardElement.animate(
         {
           opacity: [0, 1],
@@ -323,6 +438,11 @@
           fill: "forwards",
         }
       )
+      if(isHide) {
+        setTimeout(() => { 
+          cardElement.style.display = 'none'
+        }, 500);
+      }
     }
 
     function updateVoteChartAndValue(electionData) {
@@ -353,6 +473,17 @@
       }
     })
 
+    function setVoteInfoToCard(type, voteData, cardTitle) {
+      document.getElementById(`${type}-dpp-rate`).innerText = (voteData[2]/voteData[3]*100).toFixed(2)+' %';
+      document.getElementById(`${type}-kmt-rate`).innerText = (voteData[1]/voteData[3]*100).toFixed(2)+' %';
+      document.getElementById(`${type}-pfp-rate`).innerText = (voteData[0]/voteData[3]*100).toFixed(2)+' %';
+      document.getElementById(`${type}-dpp-vote-count`).innerText = voteData[2].toLocaleString();
+      document.getElementById(`${type}-kmt-vote-count`).innerText = voteData[1].toLocaleString();
+      document.getElementById(`${type}-pfp-vote-count`).innerText = voteData[0].toLocaleString();
+      document.getElementById(`${type}Name`).innerText = cardTitle;
+      document.getElementById(`${type}-vote-record`).className = `vote-record-card ${maxVoteCountParty(voteData)}`;
+    }
+
     function cityChange(cityName) {
       const {total , ...rest} =  electionData[cityName]
       regionSelect.disabled = false
@@ -365,14 +496,7 @@
       // 投票率更新
       updateVoteChartAndValue(total)
       // 縣市投票紀錄顯示出來
-      document.getElementById('city-dpp-rate').innerText = (total[2]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('city-kmt-rate').innerText = (total[1]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('city-pfp-rate').innerText = (total[0]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('city-dpp-vote-count').innerText = total[2].toLocaleString();
-      document.getElementById('city-kmt-vote-count').innerText = total[1].toLocaleString();
-      document.getElementById('city-pfp-vote-count').innerText = total[0].toLocaleString();
-      document.getElementById('cityName').innerText = cityName;
-      document.getElementById('city-vote-record').className = `vote-record-card ${maxVoteCountParty(total)}`;
+      setVoteInfoToCard('city', total, cityName)
       if (window.getComputedStyle(document.getElementById('city-vote-record')).opacity === '0') {
         toggleVoteRecordCard(document.getElementById('city-vote-record'), false, 510)
       }
@@ -384,11 +508,12 @@
       }
       // 檢查提示的介面存不存在畫面上
       if (window.getComputedStyle(hintContainers[0]).opacity === '0') return;
+    
       hintContainers.forEach(hintContainer => {
         hintContainer.animate(
           {
             opacity: [1, 0],
-            transform: ["translateY(0)", "translateY(10px)"],
+            transform: ["translateY(0)", "translateY(-10px)"],
           },
           {
             duration: 500,
@@ -407,7 +532,6 @@
       // TODO 地圖聚焦到選到的縣市 (須找到方法引用到e，現在捨棄e.pointer, e.stoppropogation)
       const selectedCityFeatures = features.filter(feature => feature.properties['COUNTYNAME'] === e.target.value)
       clicked(null, selectedCityFeatures[0])
-      cityChange(e.target.value)
     })
     // 區域下拉選單
     regionSelect.addEventListener('change', (e) => {
@@ -421,14 +545,7 @@
       // 投票率更新
       updateVoteChartAndValue(total)
       // 區域投票紀錄顯示出來
-      document.getElementById('region-dpp-rate').innerText = (total[2]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('region-kmt-rate').innerText = (total[1]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('region-pfp-rate').innerText = (total[0]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('region-dpp-vote-count').innerText = total[2].toLocaleString();
-      document.getElementById('region-kmt-vote-count').innerText = total[1].toLocaleString();
-      document.getElementById('region-pfp-vote-count').innerText = total[0].toLocaleString();
-      document.getElementById('regionName').innerText = e.target.value;
-      document.getElementById('region-vote-record').className = `vote-record-card ${maxVoteCountParty(total)}`;
+      setVoteInfoToCard('region', total, e.target.value)
       if (window.getComputedStyle(document.getElementById('region-vote-record')).opacity === '0') {
         toggleVoteRecordCard(document.getElementById('region-vote-record'), false)
       }
@@ -443,23 +560,18 @@
       // 投票率更新
       updateVoteChartAndValue(total)
       // 鄉鎮投票紀錄顯示出來
-      document.getElementById('town-dpp-rate').innerText = (total[2]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('town-kmt-rate').innerText = (total[1]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('town-pfp-rate').innerText = (total[0]/total[3]*100).toFixed(2)+' %';
-      document.getElementById('town-dpp-vote-count').innerText = total[2].toLocaleString();
-      document.getElementById('town-kmt-vote-count').innerText = total[1].toLocaleString();
-      document.getElementById('town-pfp-vote-count').innerText = total[0].toLocaleString();
-      document.getElementById('townName').innerText = e.target.value;
-      document.getElementById('town-vote-record').className = `vote-record-card ${maxVoteCountParty(total)}`;
+      setVoteInfoToCard('town', total, e.target.value)
       if (window.getComputedStyle(document.getElementById('town-vote-record')).opacity === '0') {
         toggleVoteRecordCard(document.getElementById('town-vote-record'), false)
       }
     })
     // 產「投票率」的甜圈圈圖
     const ctx = document.getElementById('vote-rate');
+    const ctxMobile = document.getElementById('vote-rate--mobile');
     const ctx_party = document.getElementById('party-vote-rate');
+    const ctx_partyMobile = document.getElementById('party-vote-rate--mobile');
 
-    const voteRateChart = new Chart(ctx, {
+    const voteRateChart = new Chart(window.innerWidth < 1200 ? ctxMobile : ctx, {
       type: 'doughnut',
       data: {
         labels: [
@@ -484,7 +596,7 @@
       }
     });
 
-    new Chart(ctx_party, {
+    new Chart(window.innerWidth < 1200 ? ctx_partyMobile : ctx_party, {
       type: 'doughnut',
       data: {
         labels: [
@@ -573,7 +685,7 @@
           .attr("stroke-linejoin", "round")
           .attr("d", pathGenerator(topojson.mesh(mapData, mapData.objects["COUNTY_MOI_1090820"] )));
 
-        g
+        mapText = g
         .append("g")
         .attr('pointer-events', "none")
         .selectAll("text")
@@ -601,6 +713,7 @@
           }
           return pathGenerator.centroid(d)[1]
         })
+        .attr('class', d => d.properties["COUNTYNAME"])
         .attr("font-size", '.5rem')
         .attr('text-anchor', "middle")
         .attr('fill', '#333')
@@ -615,7 +728,8 @@
       cityChange(d.properties['COUNTYNAME'])
       // e.stopPropagation();
       county.transition().style("fill", null);
-      
+      mapText.style("fill", '#333');
+      d3.select(`text.${d.properties['COUNTYNAME']}`).style("fill", '#CE3527')
       svg.transition().duration(750).call(
         zoom.transform,
         d3.zoomIdentity
@@ -628,6 +742,7 @@
 
     function reset() {
       county.transition().style("fill", null);
+      mapText.style("fill", '#333');
       svg.transition().duration(750).call(
         zoom.transform,
         d3.zoomIdentity,
@@ -643,7 +758,7 @@
 
     function zoomed(event) {
       const {transform} = event;
-      // console.log(transform);
+      console.log(transform);
       g.attr("transform", transform);
       g.attr("stroke-width", 1 / transform.k);
     }

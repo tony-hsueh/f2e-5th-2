@@ -340,14 +340,25 @@
       citySelect.value = 'default'
       regionSelect.value = 'default'
       townSelect.value = 'default'
+      regionSelect.disabled = true
+      townSelect.disabled = true
+      if (window.getComputedStyle(document.getElementById('city-vote-record')).opacity === '1') {
+        toggleVoteRecordCard(document.getElementById('city-vote-record'))
+      }
+      if (window.getComputedStyle(document.getElementById('region-vote-record')).opacity === '1') {
+        toggleVoteRecordCard(document.getElementById('region-vote-record'))
+      }
+      if (window.getComputedStyle(document.getElementById('town-vote-record')).opacity === '1') {
+        toggleVoteRecordCard(document.getElementById('town-vote-record'))
+      }
     })
 
     function cityChange(cityName) {
       const {total , ...rest} =  electionData[cityName]
       regionSelect.disabled = false
       townSelect.disabled = true
-      regionSelect.innerHTML = `<option selected>請選擇區域</option>`
-      townSelect.innerHTML = `<option selected>請選擇區域</option>` 
+      regionSelect.innerHTML = `<option value="default" selected>請選擇區域</option>`
+      townSelect.innerHTML = `<option value="default" selected>請選擇鄉鎮</option>` 
       Object.keys(rest).forEach(regionName => {
         regionSelect.innerHTML += `<option value=${regionName}>${regionName}</option>`
       })
@@ -403,7 +414,7 @@
       if (e.target.value === 'default') return;
       const {total , ...rest} =  electionData[citySelect.value][e.target.value]
       townSelect.disabled = false
-      townSelect.innerHTML = `<option selected>請選擇區域</option>`
+      townSelect.innerHTML = `<option value="default" selected>請選擇鄉鎮</option>`
       Object.keys(rest).forEach(townName => {
         townSelect.innerHTML += `<option value=${townName}>${townName}</option>`
       })
@@ -593,22 +604,12 @@
         .attr("font-size", '.5rem')
         .attr('text-anchor', "middle")
         .attr('fill', '#333')
-        .attr('text-shadow', '2px 2px 4px white')
-
-        d3.select(".map").append("input")
-        .attr("type", "button")
-        .style("position", "absolute")
-        .attr("name", "toggle")
-        .attr("value", "Toggle")
-        .attr("onclick", "reset()");
       }catch (err) {
         console.log(err);
-      }
-      
+      }   
     })();
 
     function clicked (e, d) {
-      console.log(d);
       const [[x0, y0], [x1, y1]] = pathGenerator.bounds(d);
       citySelect.value = d.properties['COUNTYNAME']
       cityChange(d.properties['COUNTYNAME'])
@@ -642,7 +643,7 @@
 
     function zoomed(event) {
       const {transform} = event;
-      console.log(transform);
+      // console.log(transform);
       g.attr("transform", transform);
       g.attr("stroke-width", 1 / transform.k);
     }

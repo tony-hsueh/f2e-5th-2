@@ -222,6 +222,9 @@
       <div class="col-12 col-xl-6">
         <div class="taiwan-map">
           <svg id="taiwan-svg" viewbox="0 0 400 800">
+            <filter id="shadow">
+              <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#504e4e" />
+            </filter>
           </svg>
         </div>
       </div>
@@ -386,14 +389,20 @@
     const svg = d3.select("#taiwan-svg")
     const g = svg.append("g")
     let county;
+    let townData;
     let mapText;
+    let townText;
     let taiwanBorder;
+    let selectedRegion;
+    let townBorder;
+    let region;
 
     const projectmethod = d3.geoMercator().center([123, 24]).scale(5500);
     // 地理路徑生成器
     let pathGenerator = d3.geoPath().projection(projectmethod);
     // 提供給全域中下拉選單控制地圖
     let features;
+    let townFeatures;
     const INDEXTOPARTY = {
       0 : 'pfp',
       1 : 'kmt',
@@ -532,6 +541,25 @@
     })
   }
 
+  function regionChange(regionValue) {
+    const {total , ...rest} =  electionData[citySelect.value][regionValue]
+      townSelect.disabled = false
+      townSelect.innerHTML = `<option value="default" selected>請選擇鄉鎮</option>`
+      Object.keys(rest).forEach(townName => {
+        townSelect.innerHTML += `<option value=${townName}>${townName}</option>`
+      })
+      // 投票率更新
+      updateVoteChartAndValue(total)
+      // 區域投票紀錄顯示出來
+      setVoteInfoToCard('region', total, regionValue)
+      if (window.getComputedStyle(document.getElementById('region-vote-record')).opacity === '0') {
+        toggleVoteRecordCard(document.getElementById('region-vote-record'), false)
+      }
+      if (window.getComputedStyle(document.getElementById('town-vote-record')).opacity === '1') {
+        toggleVoteRecordCard(document.getElementById('town-vote-record'))
+      }
+  }
+
     citySelect.addEventListener('change', (e) => {
       if (e.target.value === 'default') return;
       // TODO 地圖聚焦到選到的縣市 (須找到方法引用到e，現在捨棄e.pointer, e.stoppropogation)
@@ -541,22 +569,7 @@
     // 區域下拉選單
     regionSelect.addEventListener('change', (e) => {
       if (e.target.value === 'default') return;
-      const {total , ...rest} =  electionData[citySelect.value][e.target.value]
-      townSelect.disabled = false
-      townSelect.innerHTML = `<option value="default" selected>請選擇鄉鎮</option>`
-      Object.keys(rest).forEach(townName => {
-        townSelect.innerHTML += `<option value=${townName}>${townName}</option>`
-      })
-      // 投票率更新
-      updateVoteChartAndValue(total)
-      // 區域投票紀錄顯示出來
-      setVoteInfoToCard('region', total, e.target.value)
-      if (window.getComputedStyle(document.getElementById('region-vote-record')).opacity === '0') {
-        toggleVoteRecordCard(document.getElementById('region-vote-record'), false)
-      }
-      if (window.getComputedStyle(document.getElementById('town-vote-record')).opacity === '1') {
-        toggleVoteRecordCard(document.getElementById('town-vote-record'))
-      }
+      regionChange(e.target.value)
     })
     // 鄉鎮下拉選單
     townSelect.addEventListener('change', (e) => {
@@ -658,10 +671,12 @@
         citySelect.innerHTML += `<option value=${workbook.SheetNames[i]}>${workbook.SheetNames[i]}</option>` 
       }
       try {
-        const jsonResponse = await d3.json("./COUNTY_MOI_1090820.json");
-        const mapData = jsonResponse;
+        const mapData = await d3.json("./COUNTY_MOI_1090820.json");
+        townData = await d3.json("./TOWN_MOI_1120825.json");
         const geometries = topojson.feature(mapData, mapData.objects["COUNTY_MOI_1090820"])
+
         features = geometries.features
+        townFeatures = topojson.feature(townData, townData.objects["TOWN_MOI_1120825"]).features
         county = g
           .append("g")
           .selectAll("path")
@@ -691,38 +706,39 @@
           .attr("d", pathGenerator(topojson.mesh(mapData, mapData.objects["COUNTY_MOI_1090820"] )));
 
         mapText = g
-        .append("g")
-        .attr('pointer-events', "none")
-        .selectAll("text")
-        .data(geometries.features)
-        .enter()
-        .append("svg:text")
-        .text(d => d.properties["COUNTYNAME"])
-        .attr("x", d => {
-          if (
-            d.properties["COUNTYNAME"] === '嘉義縣' ||
-            d.properties["COUNTYNAME"] === '臺北市' ||
-            d.properties["COUNTYNAME"] === '新北市'
-          ) {
-            return pathGenerator.centroid(d)[0] + 5
-          }
-          return pathGenerator.centroid(d)[0]
-        })
-        .attr("y", d => {
-          if (
-            d.properties["COUNTYNAME"] === '嘉義縣' ||
-            d.properties["COUNTYNAME"] === '臺北市' ||
-            d.properties["COUNTYNAME"] === '新北市'
-          ) {
-            return pathGenerator.centroid(d)[1] + 7
-          }
-          return pathGenerator.centroid(d)[1]
-        })
-        .attr('class', d => d.properties["COUNTYNAME"])
-        .attr("font-size", '.5rem')
-        .attr('text-anchor', "middle")
-        .attr('fill', currentTheme === "dark" ? '#fff': '#333')
-      }catch (err) {
+          .append("g")
+          .attr('pointer-events', "none")
+          .selectAll("text")
+          .data(geometries.features)
+          .enter()
+          .append("svg:text")
+          .text(d => d.properties["COUNTYNAME"])
+          .attr("x", d => {
+            if (
+              d.properties["COUNTYNAME"] === '嘉義縣' ||
+              d.properties["COUNTYNAME"] === '臺北市' ||
+              d.properties["COUNTYNAME"] === '新北市'
+            ) {
+              return pathGenerator.centroid(d)[0] + 5
+            }
+            return pathGenerator.centroid(d)[0]
+          })
+          .attr("y", d => {
+            if (
+              d.properties["COUNTYNAME"] === '嘉義縣' ||
+              d.properties["COUNTYNAME"] === '臺北市' ||
+              d.properties["COUNTYNAME"] === '新北市' ||
+              d.properties["COUNTYNAME"] === '臺中市'
+            ) {
+              return pathGenerator.centroid(d)[1] + 7
+            }
+            return pathGenerator.centroid(d)[1]
+          })
+          .attr('class', d => d.properties["COUNTYNAME"])
+          .attr("font-size", '.5rem')
+          .attr('text-anchor', "middle")
+          .attr('fill', currentTheme === "dark" ? '#fff': '#333')
+      } catch (err) {
         console.log(err);
       }   
     })();
@@ -733,8 +749,66 @@
       cityChange(d.properties['COUNTYNAME'])
       // e.stopPropagation();
       county.transition().style("fill", null);
-      mapText.style("fill", '#333');
-      d3.select(`text.${d.properties['COUNTYNAME']}`).style("fill", '#CE3527')
+      // 每一次點擊需要重設定字顏色，並將選中的縣市改為透明
+      mapText.style("fill", currentTheme === "dark" ? '#fff': '#333');
+      d3.select(`text.${d.properties['COUNTYNAME']}`).style("fill", 'transparent')
+      // 區域的每一塊內容
+      const selectedTownFeatures = townFeatures.filter(townFeature => townFeature.properties.COUNTYNAME === d.properties['COUNTYNAME'])
+      if (region) region.remove()
+      region = g.append("g")
+      .attr("filter", 'url(#shadow)')
+      .selectAll("path")
+      .data(selectedTownFeatures)
+      .join("path")
+      .attr("cursor", "pointer")
+      .attr("id", data => data.properties.TOWNNAME)
+      .on("click", (e, data) => {
+        region.style("stroke", "transparent")
+        region.style("stroke-width", "0")
+        d3.select(`path#${data.properties.TOWNNAME}`).style("stroke", '#CE3527')
+        d3.select(`path#${data.properties.TOWNNAME}`).style("stroke-width", '0.7')
+        regionSelect.value = data.properties.TOWNNAME
+        regionChange(data.properties.TOWNNAME)
+      })
+      .attr("fill", data => {
+        const cityElectionData = electionData[d.properties.COUNTYNAME][data.properties.TOWNNAME].total
+        const partyname = maxVoteCountParty(cityElectionData)
+        if (partyname === 'kmt') return '#8894D8'
+        if (partyname === 'dpp') return '#84CB98'
+        if (partyname === 'pfp') return '#DFA175'
+      })
+      .attr("d", pathGenerator);
+
+      region.append("title")
+        .text(d => d.properties.TOWNNAME);
+      // 區域的邊框(不是每一塊是所有的外框，所以無法單一選取某個區)
+      const copyTownData = JSON.parse(JSON.stringify(townData.objects["TOWN_MOI_1120825"]))
+      const selectedTownBorders = copyTownData.geometries.filter(town => town.properties.COUNTYNAME === d.properties.COUNTYNAME)
+      copyTownData.geometries = selectedTownBorders
+      if (townBorder) townBorder.remove();
+      townBorder = g
+        .append("path")
+        .attr("fill", "none")
+        .attr("name", "fuck")
+        .attr("stroke", currentTheme === "dark" ? "#000" : "#fff")
+        .attr("stroke-linejoin", "round")
+        .attr("d", pathGenerator(topojson.mesh(townData, copyTownData)))
+      // 區塊的每一塊名稱
+      if (townText) townText.remove();
+      townText = g
+        .append("g")
+        .attr('pointer-events', "none")
+        .selectAll("text")
+        .data(selectedTownFeatures)
+        .enter()
+        .append("svg:text")
+        .text(d => d.properties["TOWNNAME"])
+        .attr("x", d => pathGenerator.centroid(d)[0])
+        .attr("y", d => pathGenerator.centroid(d)[1])
+        .attr("font-size", '1.5')
+        .attr('text-anchor', "middle")
+        .attr('fill', currentTheme === "dark" ? '#fff': '#333')
+
       svg.transition().duration(750).call(
         zoom.transform,
         d3.zoomIdentity
@@ -746,8 +820,11 @@
     }
 
     function reset() {
+      if (region) region.remove()
+      if (townBorder) townBorder.remove();
+      if (townText) townText.remove();
       county.transition().style("fill", null);
-      mapText.style("fill", '#333');
+      mapText.style("fill", currentTheme === "dark" ? '#fff': '#333');
       svg.transition().duration(750).call(
         zoom.transform,
         d3.zoomIdentity,
@@ -763,9 +840,10 @@
 
     function zoomed(event) {
       const {transform} = event;
-      console.log(transform);
+      // console.log(transform);
       g.attr("transform", transform);
       g.attr("stroke-width", 1 / transform.k);
+      mapText.attr("font-size", 1 / transform.k * 8)
     }
   </script>
 </body>

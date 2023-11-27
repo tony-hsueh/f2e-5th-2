@@ -31,13 +31,9 @@ function updateButton(btnEl, isDark) {
 button.addEventListener("click", () => {
   currentTheme = currentTheme === "dark" ? "light" : "dark"
 
-  if (currentTheme === "dark") {
-    taiwanBorder.style('stroke', '#000')
-    mapText.style("fill", '#fff');
-  } else {
-    taiwanBorder.style('stroke', '#fff')
-    mapText.style("fill", '#333');
-  }
+  taiwanBorder.style('stroke', currentTheme === "dark" ? '#000' : '#fff')
+  mapText.style("fill", currentTheme === "dark" ? '#fff': '#333');
+  if (townBorder) townBorder.style('stroke', currentTheme === "dark" ? '#000' : '#fff');
 
   localStorage.setItem("theme", currentTheme);
   updateButton(button, currentTheme === "dark");

@@ -1,4 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+[data-theme="light"] {
+  --color-bg: #F5F5F5;
+  --color-fg: #000000;
+  --color-cardbg: #ffffff;
+  --color-btn: #262E49;
+  --color-hover-btn: #525982;
+}
+
+[data-theme="dark"] {
+  --color-bg: #202020;
+  --color-fg: white;
+  --color-cardbg: #434343;
+  --color-btn: #457ce0;
+  --color-hover-btn: #4d88f8;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +23,7 @@
 }
 
 body {
-  background-color: #F5F5F5 !important;
+  background-color: var(--color-bg) !important;
   font-family: 'Noto Sans TC', sans-serif !important;
   padding-bottom: 4rem;
 }
@@ -20,6 +37,7 @@ nav.navbar {
 .logo {
   width: 42px;
   height: 37px;
+  margin-top: -.5rem;
   margin-right: .5rem;
 }
 
@@ -71,6 +89,24 @@ svg line:last-of-type {
   margin-bottom: 0;
 }
 
+.toggle-theme {
+  margin-left: auto;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  color: rgb(240, 239, 239);
+  background-color: transparent;
+  border: none;
+  transition: .25s ease-in;
+}
+
+.toggle-theme:hover {
+  color: white;
+}
+
 .select-group {
   display: none;
   align-items: center;
@@ -104,25 +140,21 @@ svg line:last-of-type {
 }
 
 button.btn-primary {
-  background-color: #262E49;
+  border: none;
+  background-color: var(--color-btn);
 }
 
 button.btn-primary:hover {
-  background-color: #3f4c75;
+  background-color: var(--color-hover-btn);
 }
 
 /* 投票概況 */
-.vote-status--mobile {
-  background-color: white;
-  padding: 12px 20px;
-  border-radius: .5rem;
-}
-
 .vote-status-chart--mobile {
   height: 0;
 }
 .vote-status-wrap {
-  background-color: white;
+  background-color: var(--color-cardbg);
+  color: var(--color-fg);
   padding: 20px 1rem;
   border-radius: .5rem;
 }
@@ -267,9 +299,7 @@ button.btn-primary:hover {
 
 @media (min-width: 1200px) {
   nav.navbar {
-    background-color: #262E49;
     padding: 1rem 2rem;
-    justify-content: flex-start;
   }
 
   .logo {

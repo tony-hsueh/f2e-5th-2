@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +19,9 @@
       </svg>
     </div>
     <h1 class="logo-text">2020 開票地圖</h1>
+    <button data-theme-toggle class="toggle-theme">
+      <i class="fa-regular fa-sun"></i>
+    </button>
   </nav>
   <div class="container">
     <div class="row">
@@ -375,6 +378,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js" integrity="sha512-4UKI/XKm3xrvJ6pZS5oTRvIQGIzZFoXR71rRBb1y2N+PbwAsKa5tPl2J6WvbEvwN3TxQCm8hMzsl/pO+82iRlg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script src="./toggleTheme.js"></script>
   <script>
     // d3.js 生成台灣地圖
     const width = 400
@@ -383,6 +387,7 @@
     const g = svg.append("g")
     let county;
     let mapText;
+    let taiwanBorder;
 
     const projectmethod = d3.geoMercator().center([123, 24]).scale(5500);
     // 地理路徑生成器
@@ -679,9 +684,9 @@
         
         
 
-        g.append("path")
+        taiwanBorder = g.append("path")
           .attr("fill", "none")
-          .attr("stroke", "white")
+          .attr("stroke", currentTheme === "dark" ? "#000" : "#fff")
           .attr("stroke-linejoin", "round")
           .attr("d", pathGenerator(topojson.mesh(mapData, mapData.objects["COUNTY_MOI_1090820"] )));
 
@@ -716,7 +721,7 @@
         .attr('class', d => d.properties["COUNTYNAME"])
         .attr("font-size", '.5rem')
         .attr('text-anchor', "middle")
-        .attr('fill', '#333')
+        .attr('fill', currentTheme === "dark" ? '#fff': '#333')
       }catch (err) {
         console.log(err);
       }   

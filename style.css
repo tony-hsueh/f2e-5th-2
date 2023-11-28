@@ -26,6 +26,7 @@ body {
   background-color: var(--color-bg) !important;
   font-family: 'Noto Sans TC', sans-serif !important;
   padding-bottom: 4rem;
+  position: relative;
 }
 
 nav.navbar {
@@ -232,6 +233,13 @@ button.btn-primary:hover {
 }
 
 /* 小提示 */
+.cards-wrap {
+  position: absolute;
+  width: 100%;
+  bottom: 24px;
+  left: 0;
+}
+
 .right-section {
   display: flex;
   flex-wrap: nowrap;
@@ -240,6 +248,7 @@ button.btn-primary:hover {
 }
 
 .hint-container {
+  min-width: 250px;
   background-color: #DEE0E4;
   border-radius: 8px;
   padding: 1rem;
@@ -332,6 +341,13 @@ button.btn-primary:hover {
   .vote-record-card:nth-of-type(5) {
     margin-top: 1rem;
     margin-left: unset;
+  }
+
+  .cards-wrap {
+    position: static;
+    width: 100%;
+    bottom: unset;
+    left: unset;
   }
 }
 

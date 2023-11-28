@@ -225,6 +225,9 @@
             <filter id="shadow">
               <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#504e4e" />
             </filter>
+            <filter id="light-shadow">
+              <feDropShadow dx="0" dy="0" stdDeviation="0.4" flood-color="#504e4e" />
+            </filter>
           </svg>
         </div>
       </div>
@@ -756,7 +759,7 @@
       const selectedTownFeatures = townFeatures.filter(townFeature => townFeature.properties.COUNTYNAME === d.properties['COUNTYNAME'])
       if (region) region.remove()
       region = g.append("g")
-      .attr("filter", 'url(#shadow)')
+      .attr("filter", d.properties['COUNTYNAME'] === '嘉義市' ? 'url(#light-shadow)' : 'url(#shadow)')
       .selectAll("path")
       .data(selectedTownFeatures)
       .join("path")
@@ -769,6 +772,18 @@
         d3.select(`path#${data.properties.TOWNNAME}`).style("stroke-width", '0.7')
         regionSelect.value = data.properties.TOWNNAME
         regionChange(data.properties.TOWNNAME)
+      })
+      .on("mouseover", (e, data) => {
+        d3.select(`path#${data.properties.TOWNNAME}`).style("fill", '#F42424')
+      })
+      .on("mouseleave", (e, data) => {
+        const cityElectionData = electionData[d.properties.COUNTYNAME][data.properties.TOWNNAME].total
+        const partyname = maxVoteCountParty(cityElectionData)
+        let partyColor;
+        if (partyname === 'kmt') partyColor =  '#8894D8'
+        if (partyname === 'dpp') partyColor =  '#84CB98'
+        if (partyname === 'pfp') partyColor = '#DFA175'
+        d3.select(`path#${data.properties.TOWNNAME}`).style("fill", partyColor)
       })
       .attr("fill", data => {
         const cityElectionData = electionData[d.properties.COUNTYNAME][data.properties.TOWNNAME].total

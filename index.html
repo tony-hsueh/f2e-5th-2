@@ -759,7 +759,7 @@
       const selectedTownFeatures = townFeatures.filter(townFeature => townFeature.properties.COUNTYNAME === d.properties['COUNTYNAME'])
       if (region) region.remove()
       region = g.append("g")
-      .attr("filter", d.properties['COUNTYNAME'] === '嘉義市' ? 'url(#light-shadow)' : 'url(#shadow)')
+      .attr("filter", d.properties['COUNTYNAME'] === '嘉義市' || d.properties['COUNTYNAME'] === '臺北市' || d.properties['COUNTYNAME'] === '新竹市' || d.properties['COUNTYNAME'] === '基隆市' ? 'url(#light-shadow)' : 'url(#shadow)')
       .selectAll("path")
       .data(selectedTownFeatures)
       .join("path")
